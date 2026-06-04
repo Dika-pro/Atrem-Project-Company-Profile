@@ -3,6 +3,8 @@ import { ArrowRight } from 'lucide-react'
 import { SplitText } from '../components/animations/SplitText'
 import { MagneticButton } from '../components/animations/MagneticButton'
 import FloatingLines from '../components/animations/FloatingLines'
+import ScrollReveal from '../components/animations/ScrollReveal'
+import BorderGlow from '../components/animations/BorderGlow'
 
 export const Company: React.FC = () => {
   const steps = [
@@ -61,6 +63,17 @@ export const Company: React.FC = () => {
         </div>
       </div>
 
+      <div className="container mx-auto px-4 md:px-8 max-w-4xl py-24 text-center">
+        <ScrollReveal
+          baseOpacity={0}
+          enableBlur={true}
+          baseRotation={5}
+          blurStrength={10}
+        >
+          Atrem Project is more than a workspace. It's a digital ecosystem where curiosity meets craftsmanship. We don't just teach code; we cultivate the next generation of digital architects.
+        </ScrollReveal>
+      </div>
+
       {/* Internship Workflow */}
       <div className="bg-zinc-900/30 border-y border-zinc-800/50 py-24">
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -72,11 +85,13 @@ export const Company: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8 relative">
             {steps.map((step, index) => (
               <div key={index} className="relative group">
-                <div className="bg-card border border-zinc-800 p-8 rounded-2xl transition-all duration-300 hover:border-indigo-500/50 hover:-translate-y-1">
-                  <span className="text-[10px] font-mono text-indigo-500 mb-4 block tracking-widest">{step.phase}</span>
-                  <h4 className="text-xl font-bold mb-3">{step.title}</h4>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
-                </div>
+                <BorderGlow borderRadius={24} glowColor="240 100% 70%">
+                  <div className="bg-card border border-zinc-800/50 p-8 rounded-2xl transition-all duration-300 group-hover:bg-zinc-900/50">
+                    <span className="text-[10px] font-mono text-indigo-500 mb-4 block tracking-widest">{step.phase}</span>
+                    <h4 className="text-xl font-bold mb-3">{step.title}</h4>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+                </BorderGlow>
                 {index < steps.length - 1 && (
                   <div className="hidden md:flex absolute top-1/2 -right-4 translate-x-1/2 -translate-y-1/2 z-10 text-zinc-700">
                     <ArrowRight size={24} />

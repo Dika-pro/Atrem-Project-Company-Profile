@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Lenis from '@studio-freight/lenis'
 import { Navbar } from './components/Navbar'
 import { Company } from './sections/Company'
+import { About } from './sections/About'
 import { Learning } from './sections/Learning'
 import { SideQuests } from './sections/SideQuests'
 import { Projects } from './sections/Projects'
@@ -28,6 +29,7 @@ const App: React.FC = () => {
       
       <main className="pt-20">
         <Company />
+        <About />
         <Learning />
         <SideQuests />
         <Projects />
