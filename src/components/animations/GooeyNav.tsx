@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavItem {
@@ -33,7 +33,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const updateIndicator = () => {
+  const updateIndicator = useCallback(() => {
     const activeElement = itemsRef.current[activeIndex];
     const navContainer = activeElement?.parentElement;
     if (activeElement && navContainer) {
@@ -45,13 +45,13 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
         width: activeElement.offsetWidth
       });
     }
-  };
+  }, [activeIndex]);
 
   useLayoutEffect(() => {
     updateIndicator();
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
-  }, [activeIndex]);
+  }, [updateIndicator]);
 
   const handleItemClick = (index: number, item: NavItem) => {
     if (index === activeIndex) {
@@ -105,7 +105,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
       </svg>
 
       <div 
-        className="relative flex items-center bg-zinc-900/100 backdrop-blur-md border border-zinc-800 rounded-full p-1.5 shadow-2xl"
+        className="relative flex items-center bg-zinc-900/100 backdrop-blur-md border border-zinc-800 rounded-full p-1.5 px-5 shadow-2xl"
         style={{ filter: 'url(#gooey-nav-filter)', gap: `${gap}px` }}
       >
         {/* Active Indicator */}

@@ -20,6 +20,7 @@ export default {
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
         mono: ['Fira Code', 'monospace'],
+        serif: ['Instrument Serif', 'Georgia', 'serif'],
       },
     },
   },

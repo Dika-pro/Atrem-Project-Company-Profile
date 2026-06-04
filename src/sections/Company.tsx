@@ -8,9 +8,9 @@ import BorderGlow from '../components/animations/BorderGlow'
 
 export const Company: React.FC = () => {
   const steps = [
-    { phase: 'Phase 01', title: 'Core Stack Adaptation', desc: 'Mastering the foundation of modern web technologies.' },
-    { phase: 'Phase 02', title: 'Gamified Side Quests', desc: 'Applying skills through interactive real-world challenges.' },
-    { phase: 'Phase 03', title: 'Live Client Deployment', desc: 'Deploying production-ready solutions for real users.' },
+    { phase: 'Phase 01', title: 'UI/UX Learning', desc: 'Mastering the Figma tools and Profesional website layout' },
+    { phase: 'Phase 02', title: 'Tailwind & React', desc: 'Applying Tailwind CSS framework for modern styling and responsive design.' },
+    { phase: 'Phase 03', title: 'Laravel Backend', desc: 'Learn Laravel framework for backend development and database management.' },
   ]
 
   const scrollToSection = (id: string) => {
@@ -21,11 +21,11 @@ export const Company: React.FC = () => {
   }
 
   return (
-    <section id="company" className="animate-in fade-in duration-700">
+    <section id="company" className="">
       {/* Hero Section */}
-      <div className="relative overflow-hidden min-h-[90vh] flex items-center">
+      <div className="relative overflow-hidden min-h-[100vh] flex items-center">
         {/* Floating Lines Background */}
-        <div className="absolute inset-0 z-0 opacity-40">
+        <div className="absolute inset-0 z-0 opacity-60">
           <FloatingLines 
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={[10, 15, 20]}
@@ -40,9 +40,9 @@ export const Company: React.FC = () => {
         <div className="container mx-auto px-4 md:px-8 max-w-7xl py-20 md:py-28 text-center relative z-10">
           <SplitText 
             text="Praktek Kerja Lapangan Atrem Project"
-            className="text-5xl md:text-8xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent inline-block"
+            className="text-zinc-200 text-5xl md:text-8xl font-bold tracking-tight mb-6 bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent inline-block"
           />
-          <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-zinc-200 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-semibold">
             Atrem Project is an digital Startup & web studio, 
             bridging the gap between theory and industry excellence.
           </p>
@@ -79,7 +79,7 @@ export const Company: React.FC = () => {
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-sm font-mono text-indigo-500 uppercase tracking-[0.2em] mb-3">Workflow</h2>
-            <h3 className="text-3xl font-bold">The PKL Roadmap</h3>
+            <h3 className="text-3xl font-bold">Atrem Project Roadmap</h3>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 relative">

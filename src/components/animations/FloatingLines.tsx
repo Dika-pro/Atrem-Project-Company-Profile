@@ -205,7 +205,7 @@ void main() {
 
 const MAX_GRADIENT_STOPS = 8;
 
-function hexToVec3(hex) {
+function hexToVec3(hex: string) {
   let value = hex.trim();
 
   if (value.startsWith('#')) {
@@ -229,8 +229,32 @@ function hexToVec3(hex) {
   return new Vector3(r / 255, g / 255, b / 255);
 }
 
+export interface WavePosition {
+  x?: number;
+  y?: number;
+  rotate?: number;
+}
+
+export interface FloatingLinesProps {
+  linesGradient?: string[];
+  enabledWaves?: string[];
+  lineCount?: number | number[];
+  lineDistance?: number | number[];
+  topWavePosition?: WavePosition;
+  middleWavePosition?: WavePosition;
+  bottomWavePosition?: WavePosition;
+  animationSpeed?: number;
+  interactive?: boolean;
+  bendRadius?: number;
+  bendStrength?: number;
+  mouseDamping?: number;
+  parallax?: boolean;
+  parallaxStrength?: number;
+  mixBlendMode?: React.CSSProperties['mixBlendMode'];
+}
+
 export default function FloatingLines({
-  linesGradient,
+  linesGradient = [],
   enabledWaves = ['top', 'middle', 'bottom'],
   lineCount = [6],
   lineDistance = [5],
@@ -245,8 +269,8 @@ export default function FloatingLines({
   parallax = true,
   parallaxStrength = 0.2,
   mixBlendMode = 'screen'
-}) {
-  const containerRef = useRef(null);
+}: FloatingLinesProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const targetMouseRef = useRef(new Vector2(-1000, -1000));
   const currentMouseRef = useRef(new Vector2(-1000, -1000));
   const targetInfluenceRef = useRef(0);
@@ -254,18 +278,18 @@ export default function FloatingLines({
   const targetParallaxRef = useRef(new Vector2(0, 0));
   const currentParallaxRef = useRef(new Vector2(0, 0));
 
-  const getLineCount = waveType => {
+  const getLineCount = (waveType: string) => {
     if (typeof lineCount === 'number') return lineCount;
     if (!enabledWaves.includes(waveType)) return 0;
     const index = enabledWaves.indexOf(waveType);
-    return lineCount[index] ?? 6;
+    return (lineCount as number[])[index] ?? 6;
   };
 
-  const getLineDistance = waveType => {
+  const getLineDistance = (waveType: string) => {
     if (typeof lineDistance === 'number') return lineDistance;
     if (!enabledWaves.includes(waveType)) return 0.1;
     const index = enabledWaves.indexOf(waveType);
-    return lineDistance[index] ?? 0.1;
+    return (lineDistance as number[])[index] ?? 0.1;
   };
 
   const topLineCount = enabledWaves.includes('top') ? getLineCount('top') : 0;
@@ -348,7 +372,7 @@ export default function FloatingLines({
       const stops = linesGradient.slice(0, MAX_GRADIENT_STOPS);
       uniforms.lineGradientCount.value = stops.length;
 
-      stops.forEach((hex, i) => {
+      stops.forEach((hex: string, i: number) => {
         const color = hexToVec3(hex);
         uniforms.lineGradient.value[i].set(color.x, color.y, color.z);
       });
@@ -390,7 +414,7 @@ export default function FloatingLines({
 
     if (ro) ro.observe(container);
 
-    const handlePointerMove = event => {
+    const handlePointerMove = (event: PointerEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;

@@ -1,92 +1,429 @@
-import React from 'react';
-import ChromaGrid from '../components/animations/ChromaGrid';
-import { Cpu, Globe, Rocket, Shield, Zap } from 'lucide-react';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { ArrowRight, ChevronDown, Cpu, Globe, Rocket, Shield, Zap } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+
+// Particle network canvas background
+const ParticleNetwork: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const animFrameRef = useRef<number>(0);
+
+  const initCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = canvas.parentElement?.clientWidth || window.innerWidth;
+    let height = canvas.parentElement?.clientHeight || window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    interface Particle {
+      x: number; y: number;
+      vx: number; vy: number;
+      radius: number;
+      opacity: number;
+    }
+
+    const particleCount = Math.floor((width * height) / 12000);
+    const particles: Particle[] = [];
+    const connectionDistance = 150;
+    const mouseRadius = 200;
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.5 + 0.2,
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Update & draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Mouse repulsion
+        const dx = p.x - mouseRef.current.x;
+        const dy = p.y - mouseRef.current.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouseRadius && dist > 0) {
+          const force = (mouseRadius - dist) / mouseRadius * 0.02;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+
+        // Damping
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(99, 102, 241, ${p.opacity})`;
+        ctx.fill();
+
+        // Draw connections
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const cdx = p.x - p2.x;
+          const cdy = p.y - p2.y;
+          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+
+          if (cdist < connectionDistance) {
+            const alpha = (1 - cdist / connectionDistance) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      width = canvas.parentElement?.clientWidth || window.innerWidth;
+      height = canvas.parentElement?.clientHeight || window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current.x = -1000;
+      mouseRef.current.y = -1000;
+    };
+
+    window.addEventListener('resize', handleResize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener('resize', handleResize);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
+  useEffect(() => {
+    const cleanup = initCanvas();
+    return cleanup;
+  }, [initCanvas]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+      style={{ mixBlendMode: 'screen' }}
+    />
+  );
+};
+
+// Animated counter component
+const AnimatedCounter: React.FC<{ end: number; suffix?: string; duration?: number }> = ({
+  end, suffix = '', duration = 2000
+}) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const countRef = useRef(0);
+
+  useEffect(() => {
+    if (!isInView || !ref.current) return;
+
+    const startTime = Date.now();
+    const step = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      countRef.current = Math.floor(eased * end);
+
+      if (ref.current) {
+        ref.current.textContent = countRef.current + suffix;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [isInView, end, suffix, duration]);
+
+  return <span ref={ref}>0{suffix}</span>;
+};
 
 export const About: React.FC = () => {
   const structureItems = [
     {
-      id: 1,
-      content: (
-        <div className="text-center">
-          <Cpu className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
-          <h4 className="font-bold text-white">Innovation Lab</h4>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Research & Dev</p>
-        </div>
-      )
+      icon: Cpu,
+      title: 'Innovation Lab',
+      label: 'Research & Dev',
+      desc: 'Cutting-edge research into modern frameworks, libraries, and development methodologies.'
     },
     {
-      id: 2,
-      content: (
-        <div className="text-center">
-          <Globe className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
-          <h4 className="font-bold text-white">Digital Studio</h4>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Product Design</p>
-        </div>
-      )
+      icon: Globe,
+      title: 'Digital Studio',
+      label: 'Product Design',
+      desc: 'Crafting beautiful, user-centered digital experiences with pixel-perfect precision.'
     },
     {
-      id: 3,
-      content: (
-        <div className="text-center">
-          <Rocket className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
-          <h4 className="font-bold text-white">Project Hub</h4>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Live Deployment</p>
-        </div>
-      )
+      icon: Rocket,
+      title: 'Project Hub',
+      label: 'Live Deployment',
+      desc: 'Real-world project management from concept to production deployment.'
     },
     {
-      id: 4,
-      content: (
-        <div className="text-center">
-          <Shield className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
-          <h4 className="font-bold text-white">Quality Assurance</h4>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Industry Standards</p>
-        </div>
-      )
+      icon: Shield,
+      title: 'Quality Assurance',
+      label: 'Industry Standards',
+      desc: 'Ensuring code quality, performance, and best practices at every step.'
     },
     {
-      id: 5,
-      content: (
-        <div className="text-center">
-          <Zap className="w-8 h-8 mx-auto mb-2 text-indigo-500" />
-          <h4 className="font-bold text-white">Fast-Track</h4>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Learning Curve</p>
-        </div>
-      )
+      icon: Zap,
+      title: 'Fast-Track',
+      label: 'Learning Curve',
+      desc: 'Accelerated learning paths tailored to each participant\'s growth trajectory.'
     },
-    {
-      id: 6,
-      content: <div className="text-zinc-800 font-mono text-xs">ATREM</div>
-    },
-    {
-      id: 7,
-      content: <div className="text-zinc-800 font-mono text-xs">PROJECT</div>
-    },
-    {
-      id: 8,
-      content: <div className="text-zinc-800 font-mono text-xs">2026</div>
-    }
   ];
 
+  const stats = [
+    { value: 20, suffix: '+', label: 'Projects Completed' },
+    { value: 15, suffix: '+', label: 'Team Members' },
+    { value: 3, suffix: '', label: 'Learning Phases' },
+    { value: 100, suffix: '%', label: 'Hands-on Practice' },
+  ];
+
+  const scrollToNext = () => {
+    const el = document.getElementById('about-content');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
   return (
-    <section id="about" className="py-24 bg-zinc-950">
-      <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        <div className="flex flex-col md:flex-row items-center gap-12 mb-20">
-          <div className="flex-1">
-            <h2 className="text-sm font-mono text-indigo-500 uppercase tracking-[0.2em] mb-3">About Atrem Project</h2>
-            <h3 className="text-4xl md:text-6xl font-bold mb-6">Our Organized Structure</h3>
-            <p className="text-zinc-400 text-lg leading-relaxed max-w-xl">
-              We operate as a cohesive digital ecosystem, where each department is fine-tuned to deliver excellence. From research to deployment, our structure ensures every PKL participant masters the industry workflow.
-            </p>
+    <section id="about">
+      {/* Hero-style full viewport intro — epiminds inspired */}
+      <div className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-[#06040A]">
+        {/* Particle network background */}
+        <div className="absolute inset-0 z-0">
+          <ParticleNetwork />
+        </div>
+
+        {/* Radial gradient overlays */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-transparent to-[#06040A]" />
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 70%)'
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 text-center px-4 md:px-8 max-w-5xl mx-auto">
+          {/* Accent italic text — epiminds style */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-serif italic text-2xl md:text-3xl text-zinc-400 mb-4"
+          >
+            Introducing
+          </motion.p>
+
+          {/* Big heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
+          >
+            <span className="bg-gradient-to-b from-white via-white to-white/30 bg-clip-text text-transparent">
+              Our Organized
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-indigo-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+              Structure.
+            </span>
+          </motion.h2>
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
+            A digital ecosystem where each department is fine-tuned to deliver excellence.
+            From research to deployment, mastering the industry workflow.
+          </motion.p>
+
+          {/* CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <button
+              onClick={scrollToNext}
+              className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/[0.06] border border-white/10 text-white font-medium text-base hover:bg-white/[0.12] hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+            >
+              Explore Structure
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 cursor-pointer"
+          onClick={scrollToNext}
+        >
+          <span className="text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-medium">
+            Scroll & Explore
+          </span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <ChevronDown className="w-4 h-4 text-zinc-500" />
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Content section — below the hero */}
+      <div id="about-content" className="bg-zinc-950">
+        {/* Stats bar */}
+        <div className="border-y border-zinc-800/50">
+          <div className="container mx-auto px-4 md:px-8 max-w-7xl">
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {stats.map((stat, i) => (
+                <div
+                  key={i}
+                  className={`py-10 md:py-14 text-center ${
+                    i < stats.length - 1 ? 'border-r border-zinc-800/50' : ''
+                  }`}
+                >
+                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                    <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-[0.2em] font-medium">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex-1 w-full h-[400px]">
-             <ChromaGrid 
-                items={structureItems} 
-                radius={300} 
-                damping={0.3} 
-                className="rounded-3xl border border-zinc-800"
-              />
-          </div>
+        </div>
+
+        {/* Structure cards */}
+        <div className="container mx-auto px-4 md:px-8 max-w-7xl py-24">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="text-[10px] font-mono text-indigo-500 uppercase tracking-[0.3em] mb-3 block">
+              Departments
+            </span>
+            <h3 className="text-3xl md:text-4xl font-bold">
+              Built for <span className="font-serif italic text-zinc-400">Excellence</span>
+            </h3>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {structureItems.map((item, i) => (
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                className="group relative"
+              >
+                <div className="relative bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-8 h-full transition-all duration-500 hover:bg-zinc-900/70 hover:border-zinc-700/50 hover:shadow-2xl hover:shadow-indigo-500/5">
+                  {/* Glow on hover */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      background: 'radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 60%)'
+                    }}
+                  />
+
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 group-hover:bg-indigo-500/15 group-hover:border-indigo-500/30 transition-all duration-300">
+                      <item.icon className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <span className="text-[10px] font-mono text-indigo-500 uppercase tracking-[0.2em] mb-2 block">
+                      {item.label}
+                    </span>
+                    <h4 className="text-xl font-bold mb-3 text-white">{item.title}</h4>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

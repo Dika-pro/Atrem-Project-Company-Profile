@@ -27,7 +27,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-obsidian text-zinc-100 selection:bg-indigo-500/30">
       <Navbar />
       
-      <main className="pt-20">
+      <main>
         <Company />
         <About />
         <Learning />
