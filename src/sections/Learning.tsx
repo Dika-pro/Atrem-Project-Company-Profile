@@ -80,8 +80,7 @@ export const Learning: React.FC = () => {
         {/* Center 3D Scene */}
         <div className="relative order-1 lg:order-2 h-[500px] lg:h-[600px] flex items-center justify-center">
           <div className="absolute inset-0 bg-emerald-500/10 blur-[120px] rounded-full" />
-          {/* <Learning3D /> */}
-          <div className="text-emerald-500 font-mono">3D Scene Disabled for Debugging</div>
+          <Learning3D />
         </div>
 
         {/* Right Side Cards */}
