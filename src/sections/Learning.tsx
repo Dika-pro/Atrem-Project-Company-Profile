@@ -77,10 +77,17 @@ export const Learning: React.FC = () => {
           ))}
         </div>
 
-        {/* Center 3D Scene */}
-        <div className="relative order-1 lg:order-2 h-[500px] lg:h-[600px] flex items-center justify-center">
-          <div className="absolute inset-0 bg-emerald-500/10 blur-[120px] rounded-full" />
-          <Learning3D />
+        {/* Center Visual (Non-3D) */}
+        <div className="relative order-1 lg:order-2 h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full z-0" />
+          <div className="relative z-10 w-64 h-64 border-2 border-emerald-500/20 rounded-full flex items-center justify-center">
+            <div className="w-48 h-48 border border-emerald-500/30 rounded-full flex items-center justify-center animate-[spin_20s_linear_infinite]">
+              <div className="w-4 h-4 bg-emerald-500 rounded-full" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-emerald-500/40 font-mono text-xs uppercase tracking-[0.3em]">Knowledge Orbit</span>
+            </div>
+          </div>
         </div>
 
         {/* Right Side Cards */}
