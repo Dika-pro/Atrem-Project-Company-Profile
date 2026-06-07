@@ -29,7 +29,7 @@ export const Navbar: React.FC = () => {
         {/* Logo */}
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollToSection('company')}>
           <div className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <img src="/dist/assets/ATREM PROJECT LOGO.png" alt="" className='rounded-sm' />
+            <img src="/ATREM PROJECT LOGO.png" alt="" className='rounded-sm' />
           </div>
           <span className="font-bold text-lg hidden lg:block tracking-wide">Atrem Project</span>
         </div>
@@ -50,11 +50,7 @@ export const Navbar: React.FC = () => {
             <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">Frontend Developers</span>
           </div>
           <button className="w-11 h-11 rounded-full bg-zinc-900 border-2 border-zinc-800 hover:border-indigo-500 flex items-center justify-center transition-all overflow-hidden shrink-0">
-            <img 
-              src="/dist/assets/profile.jpeg" 
-              alt="User Profile" 
-              className="w-full h-full object-cover"
-            />
+            <div className="w-full h-full bg-zinc-800" />
           </button>
         </div>
       </div>

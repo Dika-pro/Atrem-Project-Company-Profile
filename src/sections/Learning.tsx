@@ -38,7 +38,7 @@ export const Learning: React.FC = () => {
     <section id="learning" className="container mx-auto px-4 md:px-8 max-w-7xl py-20">
       <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-sm font-mono text-emerald-500 uppercase tracking-[0.2em] mb-3">Growth Hub</h2>
+          <h2 className="text-sm font-mono text-indigo-500 uppercase tracking-[0.2em] mb-3">Growth Hub</h2>
           <h3 className="text-4xl font-bold">What I Learned</h3>
         </div>
         <p className="text-zinc-400 max-w-md text-sm">
@@ -60,7 +60,7 @@ export const Learning: React.FC = () => {
                       </span>
                     ))}
                   </div>
-                  <span className="text-xl font-bold text-emerald-500">{track.progress}%</span>
+                  <span className="text-xl font-bold text-indigo-500">{track.progress}%</span>
                 </div>
                 
                 <h4 className="text-2xl font-bold mb-3">{track.title}</h4>
@@ -68,7 +68,7 @@ export const Learning: React.FC = () => {
                 
                 <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-emerald-500 transition-all duration-1000 ease-out delay-300" 
+                    className="h-full bg-indigo-500 transition-all duration-1000 ease-out delay-300" 
                     style={{ width: `${track.progress}%` }}
                   />
                 </div>
@@ -77,15 +77,32 @@ export const Learning: React.FC = () => {
           ))}
         </div>
 
-        {/* Center Visual (Non-3D) */}
+        {/* Center Visual (Main Theme) */}
         <div className="relative order-1 lg:order-2 h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full z-0" />
-          <div className="relative z-10 w-64 h-64 border-2 border-emerald-500/20 rounded-full flex items-center justify-center">
-            <div className="w-48 h-48 border border-emerald-500/30 rounded-full flex items-center justify-center animate-[spin_20s_linear_infinite]">
-              <div className="w-4 h-4 bg-emerald-500 rounded-full" />
+          <div className="absolute inset-0 bg-indigo-500/10 blur-[120px] rounded-full z-0" />
+          <div className="relative z-10 w-full max-w-[320px] aspect-square flex items-center justify-center">
+            {/* Multi-layered Rotating Rings */}
+            <div className="absolute inset-0 border border-indigo-500/20 rounded-full scale-110" />
+            <div className="absolute inset-0 border border-dashed border-indigo-500/10 rounded-full animate-[spin_60s_linear_infinite]" />
+            <div className="absolute inset-8 border border-indigo-500/20 rounded-full animate-[spin_30s_linear_infinite_reverse]" />
+            <div className="absolute inset-16 border-2 border-indigo-500/5 rounded-full" />
+            
+            {/* Pulsing Core */}
+            <div className="relative w-24 h-24 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/30 rounded-3xl flex items-center justify-center rotate-45 group transition-all duration-700 hover:scale-110 hover:border-indigo-500/60">
+              <div className="w-10 h-10 bg-indigo-500 rounded-xl shadow-[0_0_30px_rgba(99,102,241,0.6)] animate-pulse" />
+              {/* Corner Accents */}
+              <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg" />
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-indigo-400 rounded-br-lg" />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-emerald-500/40 font-mono text-xs uppercase tracking-[0.3em]">Knowledge Orbit</span>
+
+            {/* Orbiting Elements */}
+            <div className="absolute inset-0 animate-[spin_10s_linear_infinite]">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-400 rounded-full shadow-[0_0_15px_rgba(99,102,241,1)]" />
+            </div>
+            
+            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center">
+              <span className="text-indigo-500/60 font-mono text-[10px] uppercase tracking-[0.6em] whitespace-nowrap block mb-1">Neural Network Hub</span>
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent mx-auto" />
             </div>
           </div>
         </div>
@@ -103,7 +120,7 @@ export const Learning: React.FC = () => {
                       </span>
                     ))}
                   </div>
-                  <span className="text-xl font-bold text-emerald-500">{track.progress}%</span>
+                  <span className="text-xl font-bold text-indigo-500">{track.progress}%</span>
                 </div>
                 
                 <h4 className="text-2xl font-bold mb-3">{track.title}</h4>
@@ -111,7 +128,7 @@ export const Learning: React.FC = () => {
                 
                 <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-emerald-500 transition-all duration-1000 ease-out delay-300" 
+                    className="h-full bg-indigo-500 transition-all duration-1000 ease-out delay-300" 
                     style={{ width: `${track.progress}%` }}
                   />
                 </div>

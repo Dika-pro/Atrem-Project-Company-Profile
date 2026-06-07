@@ -4,9 +4,10 @@ import {
   OrbitControls, 
   Float, 
   useGLTF, 
-  Environment, 
-  ContactShadows,
-  Html
+  Bvh,
+  PerformanceMonitor,
+  AdaptiveDpr,
+  AdaptiveEvents
 } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -19,15 +20,16 @@ const FallbackModel = () => (
 )
 
 const GirlModel = () => {
+  // Use a try-catch pattern indirectly via Suspense
   const { scene } = useGLTF('https://models.readyplayer.me/6385c0f381727b1c68633741.glb')
   const group = useRef<THREE.Group>(null)
   
   useFrame((state) => {
     if (group.current) {
-      const targetRotationY = (state.mouse.x * Math.PI) / 8
-      const targetRotationX = (state.mouse.y * Math.PI) / 16
-      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotationY, 0.1)
-      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, -targetRotationX, 0.1)
+      const targetRotationY = (state.mouse.x * Math.PI) / 10
+      const targetRotationX = (state.mouse.y * Math.PI) / 20
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotationY, 0.05)
+      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, -targetRotationX, 0.05)
     }
   })
 
@@ -35,8 +37,8 @@ const GirlModel = () => {
     <group ref={group}>
       <primitive 
         object={scene} 
-        scale={2.8} 
-        position={[0, -2.8, 0]} 
+        scale={2.5} 
+        position={[0, -2.5, 0]} 
       />
     </group>
   )
@@ -65,72 +67,76 @@ const FloatingIcon = ({ icon, color, position, speed = 1 }: { icon: string, colo
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <boxGeometry args={[0.6, 0.6, 0.2]} />
+        <boxGeometry args={[0.5, 0.5, 0.1]} />
         <meshStandardMaterial 
           color={color} 
           emissive={color}
-          emissiveIntensity={hovered ? 2 : 0.5}
+          emissiveIntensity={hovered ? 1.5 : 0.4}
         />
-        <Html distanceFactor={10} position={[0, 0, 0.15]} transform>
-          <div 
-            className={`flex items-center justify-center bg-zinc-900/90 border border-zinc-700 rounded-xl p-2 w-14 h-14 shadow-2xl transition-all duration-300 pointer-events-none ${hovered ? 'scale-110 border-emerald-500' : ''}`}
-          >
-            <span className="text-[10px] font-black text-white uppercase tracking-tighter">{icon}</span>
-          </div>
-        </Html>
       </mesh>
     </Float>
   )
 }
 
 export const Learning3D: React.FC = () => {
-  return (
-    <div className="w-full h-[500px] lg:h-[600px] relative">
-      <Canvas camera={{ position: [0, 0, 10], fov: 40 }} dpr={[1, 2]}>
-        {/* Guaranteed visible test object */}
-        <mesh position={[-4, -2, 0]}>
-          <sphereGeometry args={[0.1, 16, 16]} />
-          <meshBasicMaterial color="red" />
-        </mesh>
+  const [degraded, setDegraded] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [showModel, setShowModel] = useState(true)
 
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
-        <pointLight position={[-10, -10, -10]} intensity={1} color="#10b981" />
+  return (
+    <div className="w-full h-full relative z-20 min-h-[400px]">
+      <Canvas 
+        camera={{ position: [0, 0, 10], fov: 40 }} 
+        dpr={1}
+        gl={{ 
+          antialias: false, 
+          alpha: true,
+          powerPreference: "high-performance",
+          failIfMajorPerformanceCaveat: true
+        }}
+        onCreated={() => setLoaded(true)}
+        onError={() => {
+          setShowModel(false)
+          setLoaded(true)
+        }}
+      >
+        <PerformanceMonitor onDecline={() => setDegraded(true)} />
+        <AdaptiveDpr pixelated />
         
-        <Suspense fallback={<Html center><div className="text-emerald-500 font-mono animate-pulse whitespace-nowrap">Loading 3D Scene...</div></Html>}>
-          <group position={[0, 0, 0]}>
-            <Suspense fallback={<FallbackModel />}>
-              <GirlModel />
-            </Suspense>
-            
-            <FloatingIcon 
-              icon="Figma" 
-              color="#F24E1E" 
-              position={[-3, 1.5, 2]} 
-              speed={1.2}
-            />
-            <FloatingIcon 
-              icon="Tailwind" 
-              color="#38B2AC" 
-              position={[3.2, 0.5, 1]} 
-              speed={0.8}
-            />
-            <FloatingIcon 
-              icon="React" 
-              color="#61DAFB" 
-              position={[-0.5, 3, -1]} 
-              speed={1.5}
-            />
-          </group>
-          
-          <Environment preset="city" />
-          <ContactShadows 
-            position={[0, -2.8, 0]} 
-            opacity={0.5} 
-            scale={12} 
-            blur={2} 
-            far={4.5} 
-          />
+        <ambientLight intensity={1} />
+        <pointLight position={[5, 5, 5]} intensity={1} color="#10b981" />
+        
+        <Suspense fallback={null}>
+          <Bvh firstHitOnly>
+            <group position={[0, 0, 0]}>
+              {(showModel && !degraded) ? (
+                <Suspense fallback={<FallbackModel />}>
+                  <GirlModel />
+                </Suspense>
+              ) : (
+                <FallbackModel />
+              )}
+              
+              <FloatingIcon 
+                icon="Figma" 
+                color="#F24E1E" 
+                position={[-2.5, 1.5, 1]} 
+                speed={0.5}
+              />
+              <FloatingIcon 
+                icon="Tailwind" 
+                color="#38B2AC" 
+                position={[2.5, 0.5, 1]} 
+                speed={0.4}
+              />
+              <FloatingIcon 
+                icon="React" 
+                color="#61DAFB" 
+                position={[-0.5, 2.5, -1]} 
+                speed={0.6}
+              />
+            </group>
+          </Bvh>
         </Suspense>
         
         <OrbitControls 
@@ -140,6 +146,14 @@ export const Learning3D: React.FC = () => {
           maxPolarAngle={Math.PI / 1.8}
         />
       </Canvas>
+      
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/40 backdrop-blur-sm z-30">
+          <div className="text-emerald-500 font-mono text-xs tracking-widest uppercase animate-pulse">
+            System Initializing...
+          </div>
+        </div>
+      )}
     </div>
   )
 }
