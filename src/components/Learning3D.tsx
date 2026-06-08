@@ -78,6 +78,48 @@ const FloatingIcon = ({ icon, color, position, speed = 1 }: { icon: string, colo
   )
 }
 
+const OrbitingSphere = ({ radius, speed, color, offset = 0, reverse = false, tilt = 0 }: { 
+  radius: number, 
+  speed: number, 
+  color: string, 
+  offset?: number,
+  reverse?: boolean,
+  tilt?: number
+}) => {
+  const mesh = useRef<THREE.Mesh>(null)
+  
+  useFrame((state) => {
+    if (mesh.current) {
+      const time = state.clock.getElapsedTime() * speed + offset
+      const direction = reverse ? -1 : 1
+      
+      const x = Math.cos(time * direction) * radius
+      const z = Math.sin(time * direction) * radius
+      
+      // Apply tilt
+      mesh.current.position.x = x
+      mesh.current.position.z = z
+      mesh.current.position.y = Math.sin(time * direction) * tilt
+      
+      mesh.current.rotation.x += 0.01
+      mesh.current.rotation.y += 0.01
+    }
+  })
+
+  return (
+    <mesh ref={mesh}>
+      <sphereGeometry args={[0.15, 16, 16]} />
+      <meshStandardMaterial 
+        color={color} 
+        emissive={color} 
+        emissiveIntensity={1}
+        transparent
+        opacity={0.8}
+      />
+    </mesh>
+  )
+}
+
 export const Learning3D: React.FC = () => {
   const [degraded, setDegraded] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -134,6 +176,40 @@ export const Learning3D: React.FC = () => {
                 color="#61DAFB" 
                 position={[-0.5, 2.5, -1]} 
                 speed={0.6}
+              />
+
+              {/* Orbiting Spheres */}
+              <OrbitingSphere 
+                radius={3.5} 
+                speed={0.8} 
+                color="#818cf8" 
+                tilt={1.5}
+              />
+              <OrbitingSphere 
+                radius={4.2} 
+                speed={0.5} 
+                color="#c084fc" 
+                reverse={true} 
+                tilt={-1.2}
+                offset={Math.PI}
+              />
+              
+              {/* Extra Spheres */}
+              <OrbitingSphere 
+                radius={2.8} 
+                speed={1.2} 
+                color="#34d399" 
+                reverse={false} 
+                tilt={2.5}
+                offset={Math.PI / 2}
+              />
+              <OrbitingSphere 
+                radius={5} 
+                speed={0.3} 
+                color="#fbbf24" 
+                reverse={true} 
+                tilt={0.5}
+                offset={-Math.PI / 4}
               />
             </group>
           </Bvh>

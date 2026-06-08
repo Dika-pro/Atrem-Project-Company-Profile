@@ -70,7 +70,7 @@ export const Company: React.FC = () => {
           baseRotation={5}
           blurStrength={10}
         >
-          Atrem Project is more than a workspace. It's a digital ecosystem where curiosity meets craftsmanship. We don't just teach code; we cultivate the next generation of digital architects.
+          "Life is just like Riding Bicycle. To keep your balance, you must keep moving"
         </ScrollReveal>
       </div>
 

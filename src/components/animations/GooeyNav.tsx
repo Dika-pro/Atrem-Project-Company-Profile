@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useCallback } from 'react';
+import React, { useState, useRef, useLayoutEffect, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavItem {
@@ -16,6 +16,7 @@ interface GooeyNavProps {
   gap?: number;
   className?: string;
   onItemClick?: (item: NavItem) => void;
+  activeIndex?: number;
 }
 
 const GooeyNav: React.FC<GooeyNavProps> = ({
@@ -25,9 +26,12 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   blur = 10,
   gap = 20,
   className = "",
-  onItemClick
+  onItemClick,
+  activeIndex: externalActiveIndex
 }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [internalActiveIndex, setInternalActiveIndex] = useState(0);
+  const activeIndex = externalActiveIndex !== undefined ? externalActiveIndex : internalActiveIndex;
+  
   const [particles, setParticles] = useState<{ id: number; x: number; y: number; startX: number; endX: number }[]>([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ x: 0, width: 0 });
   
@@ -53,38 +57,44 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
     return () => window.removeEventListener('resize', updateIndicator);
   }, [updateIndicator]);
 
+  // Sync particles when activeIndex changes (including from scroll)
+  const prevIndexRef = useRef(activeIndex);
+  useEffect(() => {
+    if (prevIndexRef.current !== activeIndex) {
+      const activeElement = itemsRef.current[prevIndexRef.current];
+      const targetElement = itemsRef.current[activeIndex];
+      const navContainer = activeElement?.parentElement;
+      
+      if (activeElement && targetElement && navContainer) {
+        const style = window.getComputedStyle(navContainer);
+        const paddingLeft = parseFloat(style.paddingLeft) || 0;
+
+        const startX = (activeElement.offsetLeft - paddingLeft) + activeElement.offsetWidth / 2;
+        const endX = (targetElement.offsetLeft - paddingLeft) + targetElement.offsetWidth / 2;
+
+        const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
+          id: Date.now() + i,
+          x: (Math.random() - 0.5) * 40,
+          y: (Math.random() - 0.5) * 40,
+          startX: startX - 10,
+          endX: endX - 10
+        }));
+        
+        setParticles(newParticles);
+        setTimeout(() => setParticles([]), duration * 1000);
+      }
+      prevIndexRef.current = activeIndex;
+    }
+  }, [activeIndex, particleCount, duration]);
+
   const handleItemClick = (index: number, item: NavItem) => {
     if (index === activeIndex) {
       if (onItemClick) onItemClick(item);
       return;
     }
     
-    const activeElement = itemsRef.current[activeIndex];
-    const targetElement = itemsRef.current[index];
-    const navContainer = activeElement?.parentElement;
-    
-    if (activeElement && targetElement && navContainer) {
-      const style = window.getComputedStyle(navContainer);
-      const paddingLeft = parseFloat(style.paddingLeft) || 0;
-
-      const startX = (activeElement.offsetLeft - paddingLeft) + activeElement.offsetWidth / 2;
-      const endX = (targetElement.offsetLeft - paddingLeft) + targetElement.offsetWidth / 2;
-
-      const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
-        id: Date.now() + i,
-        x: (Math.random() - 0.5) * 40,
-        y: (Math.random() - 0.5) * 40,
-        startX: startX - 10,
-        endX: endX - 10
-      }));
-      
-      setParticles(newParticles);
-    }
-    
-    setActiveIndex(index);
+    setInternalActiveIndex(index);
     if (onItemClick) onItemClick(item);
-
-    setTimeout(() => setParticles([]), duration * 1000);
   };
 
   return (

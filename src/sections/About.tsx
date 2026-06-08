@@ -276,7 +276,7 @@ export const About: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="font-serif italic text-2xl md:text-3xl text-zinc-400 mb-4"
           >
-            Introducing
+            About Atrem Project
           </motion.p>
 
           {/* Big heading */}
@@ -288,11 +288,11 @@ export const About: React.FC = () => {
             className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
           >
             <span className="bg-gradient-to-b from-white via-white to-white/30 bg-clip-text text-transparent">
-              Our Organized
+              About Atrem Project
             </span>
             <br />
             <span className="bg-gradient-to-r from-indigo-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
-              Structure.
+              Agency.
             </span>
           </motion.h2>
 
@@ -302,10 +302,11 @@ export const About: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            A digital ecosystem where each department is fine-tuned to deliver excellence.
-            From research to deployment, mastering the industry workflow.
+            Atrem Project merupakan hasil inisiatif Merta Yoga yang berfokus pada digitalisasi berbagai lini usaha. 
+            Kami menawarkan berbagai solusi digital seperti sistem manajemen laundry, Learning Management System (LMS), 
+            hingga jasa desain profil perusahaan untuk membantu bisnis Anda berkembang di era digital.
           </motion.p>
 
           {/* CTA Button */}
@@ -372,7 +373,7 @@ export const About: React.FC = () => {
           </div>
         </div>
 
-        {/* Structure cards */}
+        {/* History section */}
         <div className="container mx-auto px-4 md:px-8 max-w-7xl py-24">
           <motion.div
             className="text-center mb-16"
@@ -382,48 +383,57 @@ export const About: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <span className="text-[10px] font-mono text-indigo-500 uppercase tracking-[0.3em] mb-3 block">
-              Departments
+              Our Journey
             </span>
             <h3 className="text-3xl md:text-4xl font-bold">
-              Built for <span className="font-serif italic text-zinc-400">Excellence</span>
+              History of <span className="font-serif italic text-zinc-400">Atrem Project</span>
             </h3>
           </motion.div>
 
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {structureItems.map((item, i) => (
-              <motion.div
-                key={i}
-                variants={itemVariants}
-                className="group relative"
-              >
-                <div className="relative bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-8 h-full transition-all duration-500 hover:bg-zinc-900/70 hover:border-zinc-700/50 hover:shadow-2xl hover:shadow-indigo-500/5">
-                  {/* Glow on hover */}
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{
-                      background: 'radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 60%)'
-                    }}
-                  />
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative group"
+            >
+              <div className="absolute -inset-4 bg-indigo-500/10 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="relative overflow-hidden rounded-2xl border border-zinc-800/50 bg-zinc-900/50 shadow-2xl shadow-indigo-500/5 h-[450px] md:h-[550px]">
+                <img 
+                  src="https://atremproject.dhiyowikantara.com/assets/images/history.png" 
+                  alt="History of Atrem Project"
+                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+            </motion.div>
 
-                  <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 group-hover:bg-indigo-500/15 group-hover:border-indigo-500/30 transition-all duration-300">
-                      <item.icon className="w-5 h-5 text-indigo-400" />
-                    </div>
-                    <span className="text-[10px] font-mono text-indigo-500 uppercase tracking-[0.2em] mb-2 block">
-                      {item.label}
-                    </span>
-                    <h4 className="text-xl font-bold mb-3 text-white">{item.title}</h4>
-                    <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6"
+            >
+              <p className="text-zinc-400 text-lg leading-relaxed">
+                Semua berawal dari ketertarikan Merta Yoga pada bidang komputer, terutama setelah ia mengetahui bahwa seorang programmer dapat bekerja secara remote. Hal ini mendorongnya untuk memilih SMK 1 Denpasar dengan jurusan Rekayasa Perangkat Lunak (RPL) sebagai langkah awal dalam kariernya.
+              </p>
+              <p className="text-zinc-400 text-lg leading-relaxed">
+                Setelah menyelesaikan pendidikan di SMK, Merta Yoga memutuskan untuk mendirikan Atrem Project sebagai sumber penghasilan sampingan, yang kini berkembang menjadi agensi digital yang berfokus pada solusi teknologi.
+              </p>
+              
+              <div className="pt-4 flex flex-wrap gap-4">
+                <div className="px-5 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
+                  <span className="block text-indigo-400 font-bold text-xl">SMK 1 Denpasar</span>
+                  <span className="text-zinc-500 text-xs uppercase tracking-widest font-mono">Educational Foundation</span>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                <div className="px-5 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
+                  <span className="block text-indigo-400 font-bold text-xl">RPL Specialist</span>
+                  <span className="text-zinc-500 text-xs uppercase tracking-widest font-mono">Core Expertise</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

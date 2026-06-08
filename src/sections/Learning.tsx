@@ -8,28 +8,28 @@ export const Learning: React.FC = () => {
       title: "UI/UX Design Track",
       tags: ["Figma", "Design Systems"],
       desc: "Mastered high-fidelity wireframing, component-driven design architectures, and advanced micro-interactions.",
-      progress: 95,
+      progress: 85,
       span: "md:col-span-1"
     },
     {
       title: "Frontend Architecture",
       tags: ["React", "Tailwind CSS"],
       desc: "Advanced layout structures, responsive designs, and utility-first clean layouts.",
-      progress: 90,
+      progress: 75,
       span: "md:col-span-1"
     },
     {
       title: "Backend Systems",
-      tags: ["Laravel", "MySQL"],
-      desc: "Database management, MVC routing, and application logic using Laravel & XAMPP.",
-      progress: 85,
+      tags: ["Laravel", "PHP"],
+      desc: "Database management, MVC routing, and application logic using Laravel & PHP.",
+      progress: 35,
       span: "md:col-span-1"
     },
     {
       title: "Version Control",
       tags: ["Git", "GitHub"],
       desc: "Collaborative development workflows, branching strategies, and CI/CD basics.",
-      progress: 92,
+      progress: 90,
       span: "md:col-span-1"
     }
   ]
@@ -96,8 +96,24 @@ export const Learning: React.FC = () => {
             </div>
 
             {/* Orbiting Elements */}
-            <div className="absolute inset-0 animate-[spin_10s_linear_infinite]">
+            {/* 1. Fast, Clockwise */}
+            <div className="absolute inset-0 animate-[spin_4s_linear_infinite]">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-400 rounded-full shadow-[0_0_15px_rgba(99,102,241,1)]" />
+            </div>
+
+            {/* 2. Medium-fast (Ledang), Counter-Clockwise */}
+            <div className="absolute inset-8 animate-[spin_8s_linear_infinite_reverse]">
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full shadow-[0_0_12px_rgba(192,132,252,1)]" />
+            </div>
+
+            {/* 3. Slow, Clockwise */}
+            <div className="absolute inset-[-20px] animate-[spin_20s_linear_infinite]">
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1 h-1 bg-indigo-300 rounded-full shadow-[0_0_10px_rgba(165,180,252,1)]" />
+            </div>
+
+            {/* 4. Normal, Counter-Clockwise */}
+            <div className="absolute inset-16 animate-[spin_12s_linear_infinite_reverse]">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-indigo-500 rounded-full shadow-[0_0_12px_rgba(99,102,241,1)]" />
             </div>
             
             <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center">

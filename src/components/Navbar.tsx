@@ -1,13 +1,43 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import GooeyNav from './animations/GooeyNav'
 
 export const Navbar: React.FC = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const navItems = [
     { id: 'company', label: 'Home' },
     { id: 'about', label: 'About' },
     { id: 'learning', label: 'Learning' },
     { id: 'projects', label: 'Projects' },
   ]
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollPosition = window.scrollY + 200; // Adjusted offset for better center-screen detection
+
+          navItems.forEach((item, index) => {
+            const element = document.getElementById(item.id);
+            if (element) {
+              const offsetTop = element.offsetTop;
+              const height = element.offsetHeight;
+
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + height) {
+                setActiveIndex(index);
+              }
+            }
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [navItems]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
@@ -40,6 +70,7 @@ export const Navbar: React.FC = () => {
             items={navItems} 
             onItemClick={(item) => scrollToSection(item.id as string)}
             className="max-w-fit"
+            activeIndex={activeIndex}
           />
         </div>
 
